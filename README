@@ -1,0 +1,9 @@
+#Installation
+
+1. Go to respective gateway & storage folder and created image for each one.
+(altasaas/gateway/) -> docker build -t altasaas-gateway:latest .
+(altasaas/storage/) -> docker build -t altasaas-storage:latest .
+
+(altasaas/compose/) -> docker-compose up -d rabbitmq
+(altasaas/compose/) -> docker-compose up -d gateway
+(altasaas/compose/) -> docker-compose up -d storage
