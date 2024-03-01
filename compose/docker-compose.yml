@@ -19,12 +19,11 @@ services:
     image: altasaas-gateway:latest
     container_name: gateway
     environment:
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
+      - RABBIT_URI=amqp://admin:admin@host.docker.internal:5672/
     # other configurations...
 
   storage:
-    image: erangaeb/doc-storage:0.1
+    image: altasaas-storage:latest
     container_name: storage
     environment:
-      - RABBIT_URI=amqp://admin:admin@rabbitmq:5672/
+      - RABBIT_URI=amqp://admin:admin@host.docker.internal:5672/
