@@ -20,6 +20,8 @@ services:
     container_name: gateway
     environment:
       - RABBIT_URI=amqp://admin:admin@host.docker.internal:5672/
+    ports:
+      - 7654:7654
     # other configurations...
 
   storage:
