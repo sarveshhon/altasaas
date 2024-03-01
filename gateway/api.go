@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	spec "github.com/sarveshhon/altasaas/gateway/gateway/document"
+	spec "github.com/sarveshhon/altasaas/gateway/document"
 )
 
 // keep waiting channels for reply messages from rabbit

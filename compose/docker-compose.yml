@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - 15671:15671
+      - 15672:15672
+      - 25672:25672
+      - 5671:5671
+      - 5672:5672
+      - 4369:4369
+
+  gateway:
+    image: altasaas-gateway:latest
+    container_name: gateway
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    # other configurations...
+
+  storage:
+    image: erangaeb/doc-storage:0.1
+    container_name: storage
+    environment:
+      - RABBIT_URI=amqp://admin:admin@rabbitmq:5672/

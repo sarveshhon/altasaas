@@ -1,10 +1,10 @@
 package main
 
 import (
+	spec "github.com/sarveshhon/altasaas/storage/document"
+
 	"log"
 	"os"
-
-	spec "github.com/sarveshhon/altasaas/gateway/document"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/protobuf/proto"
@@ -29,7 +29,7 @@ func initConsumer() {
 
 	// create queue
 	queue, err := amqpChannel.QueueDeclare(
-		"gateway", // channelname
+		"storage", // channelname
 		true,      // durable
 		false,     // delete when unused
 		false,     // exclusive
@@ -61,13 +61,13 @@ func initConsumer() {
 		select {
 		case msg := <-msgChannel:
 			// unmarshal
-			docRply := &spec.CreateDocumentReply{}
-			err = proto.Unmarshal(msg.Body, docRply)
+			docMsg := &spec.CreateDocumentMessage{}
+			err = proto.Unmarshal(msg.Body, docMsg)
 			if err != nil {
 				log.Printf("ERROR: fail unmarshl: %s", msg.Body)
 				continue
 			}
-			log.Printf("INFO: received msg: %v", docRply)
+			log.Printf("INFO: received msg: %v", docMsg)
 
 			// ack for message
 			err = msg.Ack(true)
@@ -75,10 +75,23 @@ func initConsumer() {
 				log.Printf("ERROR: fail to ack: %s", err.Error())
 			}
 
-			// find waiting channel(with uid) and forward the reply to it
-			if rchan, ok := rchans[docRply.Uid]; ok {
-				rchan <- *docRply
-			}
+			// handle docMsg
+			handleMsg(docMsg)
 		}
 	}
+}
+
+func handleMsg(docMsg *spec.CreateDocumentMessage) {
+	// TODO create doc on storage
+
+	// reply
+	reply := spec.CreateDocumentReply{
+		Uid:    docMsg.Uid,
+		Status: "Created",
+	}
+	msg := RabbitMsg{
+		QueueName: docMsg.ReplyTo,
+		Reply:     reply,
+	}
+	rchan <- msg
 }

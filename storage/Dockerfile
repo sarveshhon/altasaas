@@ -5,7 +5,7 @@ ADD . /app
 WORKDIR /app
 
 # build
-RUN go build -o build/gateway *.go
+RUN go build -o build/storage *.go
 
 # server running port
 EXPOSE 7654

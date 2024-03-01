@@ -1,7 +1,7 @@
 package main
 
 import (
-	spec "github.com/sarveshhon/altasaas/gateway/document"
+	spec "github.com/sarveshhon/altasaas/storage/document"
 
 	"strconv"
 	"time"
@@ -17,6 +17,7 @@ func docMsg(name string) *spec.CreateDocumentMessage {
 	msg := &spec.CreateDocumentMessage{
 		Uid:      uid,
 		Document: doc,
+		ReplyTo:  uid,
 	}
 
 	return msg

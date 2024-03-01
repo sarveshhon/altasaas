@@ -1,23 +1,22 @@
 package main
 
 import (
+	spec "github.com/sarveshhon/altasaas/storage/document"
+
 	"log"
 	"os"
 
-	spec "github.com/sarveshhon/altasaas/gateway/document"
-
-	"google.golang.org/protobuf/proto"
-
 	amqp "github.com/rabbitmq/amqp091-go"
+	"google.golang.org/protobuf/proto"
 )
 
 type RabbitMsg struct {
-	QueueName string                     `json:"queueName"`
-	Message   spec.CreateDocumentMessage `json:"message"`
+	QueueName string                   `json:"queueName"`
+	Reply     spec.CreateDocumentReply `json:"reply"`
 }
 
 // channel to publish rabbit messages
-var pchan = make(chan RabbitMsg, 10)
+var rchan = make(chan RabbitMsg, 10)
 
 func initProducer() {
 	// conn
@@ -38,9 +37,9 @@ func initProducer() {
 
 	for {
 		select {
-		case msg := <-pchan:
+		case msg := <-rchan:
 			// marshal
-			data, err := proto.Marshal(&msg.Message)
+			data, err := proto.Marshal(&msg.Reply)
 			if err != nil {
 				log.Printf("ERROR: fail marshal: %s", err.Error())
 				continue
@@ -62,7 +61,7 @@ func initProducer() {
 				continue
 			}
 
-			log.Printf("INFO: published msg: %v", msg.Message)
+			log.Printf("INFO: published msg: %v to: %s", msg.Reply, msg.QueueName)
 		}
 	}
 }
